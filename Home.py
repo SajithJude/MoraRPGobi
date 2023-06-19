@@ -1,10 +1,10 @@
-import streamlit as st
-import io
-import fitz
-import openai
-import os
+# import streamlit as st
+# import io
+# import fitz
+# import openai
+# import os
 
-openai.api_key = os.getenv("API_KEY")
+# openai.api_key = os.getenv("API_KEY")
 
 import streamlit as st
 from pathlib import Path
