@@ -7,6 +7,9 @@ from llama_index import VectorStoreIndex, SimpleDirectoryReader, ServiceContext
 from langchain.llms import OpenAI
 
 
+from llama_index.prompts.system import SHAKESPEARE_WRITING_ASSISTANT
+
+
 
 butt = st.button("load")
 
@@ -18,7 +21,7 @@ if butt:
     data = SimpleDirectoryReader(input_dir="data").load_data()
     index = VectorStoreIndex.from_documents(data, service_context=service_context)
     chat_engine = index.as_chat_engine(
-        service_context=service_context, chat_mode="react", verbose=True
+        service_context=service_context, chat_mode="react",system_prompt=SHAKESPEARE_WRITING_ASSISTANT, verbose=True
     )
     st.session_state.chat_engine = chat_engine
     st.success("success")
