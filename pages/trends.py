@@ -19,8 +19,11 @@ class TutorAgent:
 
     def give_feedback(self, answer: str) -> str:
         self._chat_history.append(ChatMessage(role="user", content=answer))
+        self._chat_history.append(ChatMessage(role="system", content="Provide feedback without giving away the answer."))
+
         message = self._llm.chat(self._chat_history)
         return message.message.content
+
 
 tutor = TutorAgent()
 
