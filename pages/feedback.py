@@ -84,6 +84,6 @@ if st.button("Submit Answer"):
 st.sidebar.header("Chat History")
 for message in tutor._chat_history:
     if message.role == 'system':
-        st.sidebar.markdown(f"**System**: {message.content}")
+        st.sidebar.markdown(f"**System**: {question}")
     else:
         st.sidebar.markdown(f"**You**: {message.content}")
