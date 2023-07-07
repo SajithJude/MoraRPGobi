@@ -144,17 +144,31 @@ tutor = TutorAgent()
 st.title("AI Tutor")
 text = st.text_area("Input text for learning:", "Enter text here...")
 
-if st.button("Start learning session"):
-    keywords = tutor.extract_keywords(text)
-    selected_keywords = st.multiselect('Select topics for questions', keywords)
+if "keywords" not in st.session_state:
+    st.session_state.keywords = []
 
-    if selected_keywords:
-        current_keyword = selected_keywords.pop(0)
-        question, _ = tutor.generate_question_answer(current_keyword)
-        st.write("Question: ", question)
-        st.write("Provide your answer and press 'Submit Answer' when ready.")
-    else:
-        st.write("Please select at least one topic.")
+
+if st.button("Index topics"):
+    keywords = tutor.extract_keywords(text)
+    st.session_state.keywords = keywords
+
+
+
+
+selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
+
+if st.button("Start learning Session"):
+    current_keyword = selected_keywords.pop(0)
+    question, _ = tutor.generate_question_answer(current_keyword)
+    st.write("Question: ", question)
+    st.write("Provide your answer and press 'Submit Answer' when ready.")
+else:
+    st.write("Please select at least one topic.")
+
+
+
+
+
 
 answer = st.text_input("Your answer:")
 if st.button("Submit Answer"):
