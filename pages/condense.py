@@ -58,7 +58,7 @@ if butt:
     #     verbose=True
     # )
     chat_engine = index.as_chat_engine(
-        text_qa_template=custom_prompt,
+        condense_question_prompt=custom_prompt,
     chat_mode='condense_question', 
     verbose=True
         )
