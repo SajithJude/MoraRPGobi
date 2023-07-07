@@ -35,6 +35,8 @@ class TutorAgent:
         score = sequence_matcher.ratio()
         return score
 
+
+
     def compare_answers(self, user_answer: str) -> float:
         return self.get_score(self.expected_answer, user_answer)
 
@@ -43,14 +45,7 @@ class TutorAgent:
 
         feedback_instructions = """
         Please provide detailed feedback based on the following principles:
-        (1) Help clarify what good performance is (goals, criteria, expected standards)
-        (2) Facilitate the development of self-assessment (reflection) in learning
-        (3) Deliver high quality information to students about their learning
-        (4) Encourage teacher and peer dialogue around learning
-        (5) Encourage positive motivational beliefs and self-esteem
-        (6) Provide opportunities to close the gap between current and desired performance
-        (7) Provide information to teachers that can be used to help shape teaching
-
+        
         Do not give away the correct answer if the answer is incorrect or only partly correct.
         Make sure to mention the principle numbers that are relevant to your feedback.
         If the answer is incorrect or only partly correct, guide the user to try again.
@@ -62,8 +57,15 @@ class TutorAgent:
         self._chat_history.append(ChatMessage(role="system", content=feedback_instructions))
 
         message = self._llm.chat(self._chat_history)
-        return message.message.content
+        feedback = message.message.content
 
+        score = self.get_score(answer)
+        if score < 0.0:  # replace with your threshold
+            self._chat_history = []  # clear chat history for new question
+            next_question = self.generate_question(text)
+            feedback += f"\n\nYour score was below the threshold. Here's your next question: {next_question}"
+
+        return feedback
 
 tutor = TutorAgent()
 
