@@ -23,13 +23,14 @@ class TutorAgent:
         message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question about the following text: {self.text} and provide the expected answer")])
         split_message = message.message.content.split('\n')
         self.expected_answer = split_message[1] if len(split_message) > 1 else ''
+        st.write(self.expected_answer)
+        
         return split_message[0]
 
     # Initialize the stemmer
 
     def get_score(self, user_answer: str) -> float:
         # use self.expected_answer directly in this method
-        st.write(expected_answer)
         sequence_matcher = difflib.SequenceMatcher(None, self.expected_answer, user_answer)
         score = sequence_matcher.ratio()
         return score
