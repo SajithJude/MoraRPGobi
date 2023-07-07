@@ -1,6 +1,8 @@
 import streamlit as st
 from llama_index.llms import OpenAI, ChatMessage
 from typing import List
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
 
 llm = OpenAI(temperature=0, model="gpt-3.5-turbo-0613")
 stemmer = PorterStemmer()
