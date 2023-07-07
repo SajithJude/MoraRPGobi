@@ -29,6 +29,7 @@ class TutorAgent:
 
     def get_score(self, user_answer: str) -> float:
         # use self.expected_answer directly in this method
+        st.write(self.expected_answer)
         sequence_matcher = difflib.SequenceMatcher(None, self.expected_answer, user_answer)
         score = sequence_matcher.ratio()
         return score
