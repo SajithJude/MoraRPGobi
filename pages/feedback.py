@@ -39,20 +39,30 @@ class TutorAgent:
         return self.get_score(self.expected_answer, user_answer)
 
     def give_feedback(self, answer: str) -> str:
-        score = self.get_score(answer)
         self._chat_history.append(ChatMessage(role="user", content=answer))
-        feedback = ''
-        st.write(score)
-        if score != 0.002:  # Threshold to consider the answer as correct or not.
-            feedback = "Your answer is not quite correct. Try again."
-            # Generate a new question based on the same text.
-            question = self.generate_question()
-            self._chat_history.append(ChatMessage(role="system", content=f"New question: {question}"))
-        else:
-            feedback = "Good job! Your answer is correct."
 
-        self._chat_history.append(ChatMessage(role="system", content=feedback))
-        return feedback
+        feedback_instructions = """
+        Please provide detailed feedback based on the following principles:
+        (1) Help clarify what good performance is (goals, criteria, expected standards)
+        (2) Facilitate the development of self-assessment (reflection) in learning
+        (3) Deliver high quality information to students about their learning
+        (4) Encourage teacher and peer dialogue around learning
+        (5) Encourage positive motivational beliefs and self-esteem
+        (6) Provide opportunities to close the gap between current and desired performance
+        (7) Provide information to teachers that can be used to help shape teaching
+
+        Do not give away the correct answer if the answer is incorrect or only partly correct.
+        Make sure to mention the principle numbers that are relevant to your feedback.
+        If the answer is incorrect or only partly correct, guide the user to try again.
+
+        Expected answer: {self.expected_answer}
+        User's answer: {answer}
+        """
+
+        self._chat_history.append(ChatMessage(role="system", content=feedback_instructions))
+
+        message = self._llm.chat(self._chat_history)
+        return message.message.content
 
 
 tutor = TutorAgent()
