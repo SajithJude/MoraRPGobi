@@ -44,7 +44,7 @@ query = st.text_input("Enter query prompt")
 asl = st.button("Submit")
 
 if asl:
-    response = st.session_state.vector_index.chat(query)
+    response = st.session_state.vector_index.chat(f'Use the tool to answer:{query}')
     # vector_resp  = st.session_state.vector_index.query(query).response
     st.write("### Vector Index Response:")
     st.write(response.response)
