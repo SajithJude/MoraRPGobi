@@ -109,8 +109,8 @@ class TutorAgent:
 
     def extract_keywords(self, text: str) -> List[str]:
         self.reset()
-        message = self._llm.chat([ChatMessage(role="system", content=f"Extract 10 keywords or topics from the following text: {text}")])
-        keywords = message.message.content.split(', ')  # Assuming the model returns a comma-separated list
+        message = self._llm.chat([ChatMessage(role="system", content=f"Please list 10 keywords or topics from the following text: {text}")])
+        keywords = message.message.content.split('\n')  # Assuming the model returns a newline-separated list
         return keywords
 
     def generate_question_answer(self, keyword: str) -> (str, str):
