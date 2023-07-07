@@ -22,7 +22,7 @@ class TutorAgent:
         self.reset()
         message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question about the following text: {self.text} and provide the expected answer")])
         split_message = message.message.content.split('\n')
-        self.expected_answer = split_message[1] if len(split_message) > 1 else ''
+        self.expected_answer = split_message[1]
         st.write(split_message[1])
         
         return split_message[0]
