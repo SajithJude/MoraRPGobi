@@ -36,3 +36,11 @@ answer = st.text_input("Your answer:")
 if st.button("Submit Answer"):
     feedback = tutor.give_feedback(answer)
     st.write("Feedback: ", feedback)
+
+# Display chat history on sidebar
+st.sidebar.header("Chat History")
+for message in tutor._chat_history:
+    if message.role == 'system':
+        st.sidebar.markdown(f"**System**: {message.content}")
+    else:
+        st.sidebar.markdown(f"**You**: {message.content}")
