@@ -40,7 +40,7 @@ class TutorAgent:
         score = self.get_score(answer)
         self._chat_history.append(ChatMessage(role="user", content=answer))
         feedback = ''
-
+        st.write(score)
         if score < 0.002:  # Threshold to consider the answer as correct or not.
             feedback = "Your answer is not quite correct. Try again."
             # Generate a new question based on the same text.
