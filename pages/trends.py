@@ -19,7 +19,23 @@ class TutorAgent:
 
     def give_feedback(self, answer: str) -> str:
         self._chat_history.append(ChatMessage(role="user", content=answer))
-        self._chat_history.append(ChatMessage(role="system", content="Provide feedback without giving away the answer."))
+
+        feedback_instructions = """
+        Please provide feedback based on the following principles:
+        (1) Help clarify what good performance is (goals, criteria, expected standards)
+        (2) Facilitate the development of self-assessment (reflection) in learning
+        (3) Deliver high quality information to students about their learning
+        (4) Encourage teacher and peer dialogue around learning
+        (5) Encourage positive motivational beliefs and self-esteem
+        (6) Provide opportunities to close the gap between current and desired performance
+        (7) Provide information to teachers that can be used to help shape teaching
+        Remember to:
+        - Not give away the correct answer if the answer is incorrect or only partly correct.
+        - Mention the principle numbers used while giving feedback.
+        - Say 'try again' if the answer is incorrect or only partly correct.
+        """
+        
+        self._chat_history.append(ChatMessage(role="system", content=feedback_instructions))
 
         message = self._llm.chat(self._chat_history)
         return message.message.content
