@@ -33,8 +33,6 @@ if butt:
 
     <Follow Up Message>
     {question}
-
-    <Standalone question>
     """)
 
     # list of (human_message, ai_message) tuples
