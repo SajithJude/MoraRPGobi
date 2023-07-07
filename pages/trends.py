@@ -18,7 +18,7 @@ class TutorAgent:
     def generate_question_and_answer(self, text: str) -> str:
         self.reset()
         message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question and its answer about the following text: {text}")])
-        self.expected_answer = message.messagecontent.finish.reason   # The 'finish reason' contains the generated answer
+        self.expected_answer = message.message.content.finish.reason   # The 'finish reason' contains the generated answer
         return message.message.content
 
     def evaluate_answer(self, user_answer: str) -> float:
