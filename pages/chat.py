@@ -28,7 +28,7 @@ def process_pdf(uploaded_file):
         # vector_retriever = vector_index.as_retriever(retriever_mode='embedding')
         # vector_index = RetrieverQueryEngine(vector_retriever)
         # st.session_state.vector_index = vector_index
-        st.session_state.vector_index =  vector_index.as_chat_engine(chat_mode='react', verbose=True)
+        st.session_state.vector_index =  vector_index.as_chat_engine(verbose=True)
 # return chat_engine
     
     return st.session_state.vector_index, st.session_state
