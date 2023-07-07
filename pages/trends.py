@@ -8,44 +8,38 @@ class TutorAgent:
     def __init__(self, chat_history: List[ChatMessage] = []):
         self._llm = llm
         self._chat_history = chat_history
-        self.expected_answer = ""
-        self.threshold_score = 0.7  # Set according to your requirements
 
     def reset(self):
         self._chat_history = []
-        self.expected_answer = ""
 
-    def generate_question_and_answer(self, text: str) -> str:
+    def generate_question(self, text: str) -> str:
         self.reset()
-        message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question and its answer about the following text: {text}")])
-        self.expected_answer = message.message.content.finish.reason   # The 'finish reason' contains the generated answer
+        message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question about the following text: {text}")])
         return message.message.content
 
-    def evaluate_answer(self, user_answer: str) -> float:
-        # Use the OpenAI API to evaluate the similarity between the user's answer and the expected answer
-        prompt = f"Considering the context and semantics, rate the similarity between the following two sentences on a scale of 0 to 1:\n\nSentence 1: {self.expected_answer}\nSentence 2: {user_answer}"
-        self._chat_history.append(ChatMessage(role="system", content=prompt))
-        rating_message = self._llm.chat(self._chat_history)
-        score = float(rating_message.message.content)
-        return score
+    def give_feedback(self, answer: str) -> str:
+        self._chat_history.append(ChatMessage(role="user", content=answer))
 
-    def give_feedback(self, user_answer: str) -> str:
-        self._chat_history.append(ChatMessage(role="user", content=user_answer))
-        score = self.evaluate_answer(user_answer)
-
-        if score < self.threshold_score:
-            # Request feedback and a follow-up question
-            feedback_instructions = """
-            The provided answer did not meet the required standard. Please give constructive feedback without revealing the correct answer, and generate a new question that focuses on the missed information in the previous answer.
-            """
-        else:
-            # Just move to next question
-            feedback_instructions = """
-            The provided answer was satisfactory. Please move to the next topic and generate a new question.
-            """
+        feedback_instructions = """
+        Please provide feedback based on the following principles:
+        (1) Help clarify what good performance is (goals, criteria, expected standards)
+        (2) Facilitate the development of self-assessment (reflection) in learning
+        (3) Deliver high quality information to students about their learning
+        (4) Encourage teacher and peer dialogue around learning
+        (5) Encourage positive motivational beliefs and self-esteem
+        (6) Provide opportunities to close the gap between current and desired performance
+        (7) Provide information to teachers that can be used to help shape teaching
+        Remember to:
+        - Not give away the correct answer if the answer is incorrect or only partly correct.
+        - Mention the principle numbers used while giving feedback.
+        - Say 'try again' if the answer is incorrect or only partly correct.
+        """
+        
         self._chat_history.append(ChatMessage(role="system", content=feedback_instructions))
+
         message = self._llm.chat(self._chat_history)
         return message.message.content
+
 
 tutor = TutorAgent()
 
@@ -53,7 +47,7 @@ st.title("AI Tutor")
 text = st.text_area("Input text for learning:", "Enter text here...")
 
 if st.button("Start learning session"):
-    question = tutor.generate_question_and_answer(text)
+    question = tutor.generate_question(text)
     st.write("Question: ", question)
     st.write("Provide your answer and press 'Submit Answer' when ready.")
 
