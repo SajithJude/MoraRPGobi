@@ -25,10 +25,10 @@ def process_pdf(uploaded_file):
     
     if "vector_index" not in st.session_state:
         vector_index = GPTVectorStoreIndex.from_documents(documents, service_context=service_context)
-        vector_retriever = vector_index.as_retriever(retriever_mode='embedding')
-        vector_index = RetrieverQueryEngine(vector_retriever)
-        st.session_state.vector_index = vector_index
-        # st.session_state.vector_index =  vector_index.as_chat_engine(chat_mode='react', verbose=True)
+        # vector_retriever = vector_index.as_retriever(retriever_mode='embedding')
+        # vector_index = RetrieverQueryEngine(vector_retriever)
+        # st.session_state.vector_index = vector_index
+        st.session_state.vector_index =  vector_index.as_chat_engine(chat_mode='react', verbose=True)
 # return chat_engine
     
     return st.session_state.vector_index, st.session_state
