@@ -38,12 +38,12 @@ if butt:
     """)
 
     # list of (human_message, ai_message) tuples
-    # custom_chat_history = [
-    #     (
-    #        'Hello assistant, we are having a insightful quiz this document.', 
-    #     'Okay, sounds good.'
-    #     )
-    # ]
+    custom_chat_history = [
+        (
+           human_message:'Hello assistant, we are having a insightful quiz this document.', 
+        ai_message: 'Okay, sounds good.'
+        )
+    ]
     service_context = ServiceContext.from_defaults(
         llm=ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo")
     )
@@ -54,7 +54,7 @@ if butt:
     chat_engine = CondenseQuestionChatEngine.from_defaults(
         query_engine=query_engine, 
         condense_question_prompt=custom_prompt,
-        # chat_history=custom_chat_history,
+        chat_history=custom_chat_history,
         verbose=True
     )
     st.session_state.chat_engine = chat_engine
