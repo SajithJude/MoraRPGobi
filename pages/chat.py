@@ -47,4 +47,4 @@ if asl:
     response = st.session_state.vector_index.chat(query)
     # vector_resp  = st.session_state.vector_index.query(query).response
     st.write("### Vector Index Response:")
-    st.write(response)
+    st.write(response.response)
