@@ -3,6 +3,7 @@ from llama_index.llms import OpenAI, ChatMessage
 from typing import List
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
+import difflib
 
 llm = OpenAI(temperature=0, model="gpt-3.5-turbo-0613")
 stemmer = PorterStemmer()
@@ -26,21 +27,17 @@ class TutorAgent:
 
     # Initialize the stemmer
 
-    def get_score(expected_answer: str, user_answer: str) -> float:
-        # Tokenize and stem the words in each sentence
-        expected_words = set(stemmer.stem(word) for word in word_tokenize(expected_answer))
-        user_words = set(stemmer.stem(word) for word in word_tokenize(user_answer))
-
-        # Calculate the score as the size of the intersection divided by the size of the union
-        score = len(expected_words & user_words) / len(expected_words | user_words)
-
+    def get_score(self, user_answer: str) -> float:
+        # use self.expected_answer directly in this method
+        sequence_matcher = difflib.SequenceMatcher(None, self.expected_answer, user_answer)
+        score = sequence_matcher.ratio()
         return score
 
     def compare_answers(self, user_answer: str) -> float:
         return self.get_score(self.expected_answer, user_answer)
 
     def give_feedback(self, answer: str) -> str:
-        score = self.compare_answers(answer)
+        score = self.get_score(answer)
         self._chat_history.append(ChatMessage(role="user", content=answer))
         feedback = ''
 
