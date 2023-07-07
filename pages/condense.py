@@ -40,8 +40,8 @@ if butt:
     # list of (human_message, ai_message) tuples
     custom_chat_history = [
         (
-            'shall we start the quiz ?', 
-            'Okay, sounds good.'
+           'Hello assistant, we are having a insightful quiz this document.', 
+        'Okay, sounds good.'
         )
     ]
     service_context = ServiceContext.from_defaults(
