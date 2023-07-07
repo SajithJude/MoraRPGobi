@@ -58,6 +58,7 @@ if butt:
     chat_engine = index.as_chat_engine(
         condense_question_prompt=custom_prompt,
     chat_mode='condense_question', 
+    chat_history=custom_chat_history,
     verbose=True
         )
     st.session_state.chat_engine = chat_engine
