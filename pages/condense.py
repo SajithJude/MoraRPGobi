@@ -64,5 +64,5 @@ ques = st.text_input("Question")
 ask = st.button("ask")
 
 if ask:
-    response = st.session_state.chat_engine.chat(f"Use the tool to answer:{ques}")
+    response = st.session_state.chat_engine.chat(ques)
     st.write(response.response)
