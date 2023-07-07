@@ -3,42 +3,52 @@ from llama_index.llms import OpenAI, ChatMessage
 from typing import List
 
 llm = OpenAI(temperature=0, model="gpt-3.5-turbo-0613")
+class TutorAgent(YourOpenAIAgent):
+    def __init__(self, tools: Sequence[BaseTool] = [], llm: OpenAI = OpenAI(model="gpt-3.5-turbo-0613"), chat_history: List[ChatMessage] = []):
+        super().__init__(tools, llm, chat_history)
+        self.expected_answer = ""
+        self.threshold_score = 0.7  # Set according to your requirements
 
-class TutorAgent:
-    def __init__(self, chat_history: List[ChatMessage] = []):
-        self._llm = llm
-        self._chat_history = chat_history
+    def generate_question_and_answer(self, prompt: str):
+        self._chat_history.append(ChatMessage(role="system", content=prompt))
+        question_message = self._llm.chat(self._chat_history)
+        self._chat_history.append(question_message.message)
+        
+        self._chat_history.append(ChatMessage(role="system", content="Please provide an answer to the question."))
+        answer_message = self._llm.chat(self._chat_history)
+        self._chat_history.append(answer_message.message)
 
-    def reset(self):
-        self._chat_history = []
+        self.expected_answer = answer_message.message.content
+        return question_message.message.content
 
-    def generate_question(self, text: str) -> str:
-        self.reset()
-        message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question about the following text: {text}")])
-        return message.message.content
+    def evaluate_answer(self, user_answer: str) -> float:
+        # Use the OpenAI API to evaluate the similarity between the user's answer and the expected answer
+        prompt = f"Considering the context and semantics, rate the similarity between the following two sentences on a scale of 0 to 1:\n\nSentence 1: {self.expected_answer}\nSentence 2: {user_answer}"
+        self._chat_history.append(ChatMessage(role="system", content=prompt))
+        rating_message = self._llm.chat(self._chat_history)
+        self._chat_history.append(rating_message.message)
+        
+        score = float(rating_message.message.content)
+        return score
 
-    def give_feedback(self, answer: str) -> str:
-        self._chat_history.append(ChatMessage(role="user", content=answer))
-
-        feedback_instructions = """
-        Please provide feedback based on the following principles:
-        (1) Help clarify what good performance is (goals, criteria, expected standards)
-        (2) Facilitate the development of self-assessment (reflection) in learning
-        (3) Deliver high quality information to students about their learning
-        (4) Encourage teacher and peer dialogue around learning
-        (5) Encourage positive motivational beliefs and self-esteem
-        (6) Provide opportunities to close the gap between current and desired performance
-        (7) Provide information to teachers that can be used to help shape teaching
-        Remember to:
-        - Not give away the correct answer if the answer is incorrect or only partly correct.
-        - Mention the principle numbers used while giving feedback.
-        - Say 'try again' if the answer is incorrect or only partly correct.
-        """
+    def give_feedback_and_followup_question(self, user_answer: str):
+        score = self.evaluate_answer(user_answer)
+        
+        if score < self.threshold_score:
+            # Request feedback and a follow-up question
+            feedback_instructions = """
+            The provided answer did not meet the required standard. Please give constructive feedback without revealing the correct answer, and generate a new question that focuses on the missed information in the previous answer.
+            """
+        else:
+            # Just move to next question
+            feedback_instructions = """
+            The provided answer was satisfactory. Please move to the next topic and generate a new question.
+            """
         
         self._chat_history.append(ChatMessage(role="system", content=feedback_instructions))
 
-        message = self._llm.chat(self._chat_history)
-        return message.message.content
+        feedback_and_question_message = self._llm.chat(self._chat_history)
+        return feedback_and_question_message.message.content
 
 
 tutor = TutorAgent()
