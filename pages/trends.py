@@ -1,56 +1,38 @@
 import streamlit as st
-from pytrends.request import TrendReq
-import pandas as pd
-from llama_index import download_loader
-from pandasai.llm.openai import OpenAI
+from llama_index.llms import OpenAI, ChatMessage
+from typing import List
 
-# Initialize pytrends
-pytrends = TrendReq(hl='en-US', tz=360)
+llm = OpenAI(temperature=0, model="gpt-3.5-turbo-0613")
 
-# List of initial keywords
-initial_keywords = ['Galle Tourism', 'Galle', 'Hotels Galle', 'Resorts Galle Srilanka','Srilanka', 'Tourist', 'locations']
+class TutorAgent:
+    def __init__(self, chat_history: List[ChatMessage] = []):
+        self._llm = llm
+        self._chat_history = chat_history
 
-# Create a for keyword selection
-selected_keywords = st.multiselect('Select existing keywords', initial_keywords)
+    def reset(self):
+        self._chat_history = []
 
-# Allow additional keywords to be added
-additional_keyword = st.text_input("Add a new keyword")
-if additional_keyword:
-    selected_keywords.append(additional_keyword)
+    def generate_question(self, text: str) -> str:
+        self.reset()
+        message = self._llm.chat([ChatMessage(role="system", content=f"Generate a broad question about the following text: {text}")])
+        return message.message.content
 
-# Initialize the AI
-llm = OpenAI()
-PandasAIReader = download_loader("PandasAIReader")
-loader = PandasAIReader(llm=llm)
+    def give_feedback(self, answer: str) -> str:
+        self._chat_history.append(ChatMessage(role="user", content=answer))
+        message = self._llm.chat(self._chat_history)
+        return message.message.content
 
-# When keywords are selected, fetch data from Google Trends and display it
-if st.button('Fetch Google Trends data for selected keywords'):
-    # Define the payload
-    kw_list = selected_keywords
+tutor = TutorAgent()
 
-    # Get Google Trends data
-    pytrends.build_payload(kw_list, timeframe='today 5-y')
+st.title("AI Tutor")
+text = st.text_area("Input text for learning:", "Enter text here...")
 
-    # Get interest over time
-    data = pytrends.interest_over_time()
-    if not data.empty:
-        data = data.drop(labels=['isPartial'],axis='columns')
+if st.button("Start learning session"):
+    question = tutor.generate_question(text)
+    st.write("Question: ", question)
+    st.write("Provide your answer and press 'Submit Answer' when ready.")
 
-        # Save the data to the session state
-        st.session_state.data = data
-
-        st.write(data)
-else:
-    # If the data is already in the session state, load it
-    if 'data' in st.session_state:
-        data = st.session_state.data
-        st.write(data)
-
-# Assuming you want to use the AI to answer questions based on the fetched data
-query = st.text_input("Enter your question")
-ask = st.button("ask")
-
-
-if ask:
-    response = loader.run_pandas_ai(st.session_state.data, query, is_conversational_answer=True)
-    st.write(response)
+answer = st.text_input("Your answer:")
+if st.button("Submit Answer"):
+    feedback = tutor.give_feedback(answer)
+    st.write("Feedback: ", feedback)
