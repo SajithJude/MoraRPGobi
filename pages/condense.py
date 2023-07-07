@@ -40,8 +40,8 @@ if butt:
     # list of (human_message, ai_message) tuples
     custom_chat_history = [
         (
-           human_message:'Hello assistant, we are having a insightful quiz this document.', 
-        ai_message: 'Okay, sounds good.'
+           'Hello assistant, we are having a insightful quiz this document.', 
+         'Okay, sounds good.'
         )
     ]
     service_context = ServiceContext.from_defaults(
@@ -50,13 +50,18 @@ if butt:
 
     data = SimpleDirectoryReader(input_dir="data").load_data()
     index = VectorStoreIndex.from_documents(data, service_context=service_context)
-    query_engine = index.as_query_engine()
-    chat_engine = CondenseQuestionChatEngine.from_defaults(
-        query_engine=query_engine, 
-        condense_question_prompt=custom_prompt,
-        chat_history=custom_chat_history,
-        verbose=True
-    )
+    # query_engine = index.as_query_engine()
+    # chat_engine = CondenseQuestionChatEngine.from_defaults(
+    #     query_engine=query_engine, 
+    #     condense_question_prompt=custom_prompt,
+    #     chat_history=custom_chat_history,
+    #     verbose=True
+    # )
+    chat_engine = index.as_chat_engine(
+        text_qa_template=custom_prompt,
+    chat_mode='condense_question', 
+    verbose=True
+        )
     st.session_state.chat_engine = chat_engine
     st.success("success")
 
