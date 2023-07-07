@@ -44,7 +44,12 @@ if butt:
             'Okay, sounds good.'
         )
     ]
+    service_context = ServiceContext.from_defaults(
+        llm=ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo")
+    )
 
+    data = SimpleDirectoryReader(input_dir="data").load_data()
+    index = VectorStoreIndex.from_documents(data, service_context=service_context)
     query_engine = index.as_query_engine()
     chat_engine = CondenseQuestionChatEngine.from_defaults(
         query_engine=query_engine, 
