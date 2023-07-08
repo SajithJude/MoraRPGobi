@@ -203,9 +203,12 @@ class TutorAgent:
         return sentence_bleu([expected_answer.split()], user_answer.split())
 
 
-tutor = TutorAgent()
 
-st.title("AI Tutor")
+try:
+
+    tutor = TutorAgent()
+
+    st.title("AI Tutor")
 
 
 
@@ -220,7 +223,7 @@ st.title("AI Tutor")
 
 
 # if st.button("Index topics"):
-try:
+
     uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
     if uploaded_file is not None:
         # if "index" not in st.session_state:
