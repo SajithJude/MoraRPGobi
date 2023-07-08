@@ -246,36 +246,39 @@ try:
     else:
         st.write("Please select at least one topic.")
 
+
+
+
+
+
+
+    answer = st.text_input("Your answer:")
+    if st.button("Submit Answer"):
+        feedback, score = tutor.give_feedback(answer)
+        st.write("Feedback: ", feedback)
+
+        if score < tutor.score_threshold:  # if answer is incorrect or partially correct
+            # generate subtopic from current_keyword and add it to st.session_state.selected_keywords
+            subtopic = tutor.extract_keywords(feedback)  # This should ideally be a more sophisticated subtopic generation, but we'll use keyword extraction for simplicity.
+            st.session_state.selected_keywords.insert(0, subtopic[0])  # Insert the first keyword as a subtopic
+        elif st.session_state.selected_keywords:  # if there are still st.session_state.selected_keywords left
+            st.session_state.selected_keywords.pop(0)  # remove the current keyword
+
+        if st.session_state.selected_keywords:
+            current_keyword = st.session_state.selected_keywords[0]
+            question, _ = tutor.generate_question_answer(current_keyword)
+            st.write("Next question: ", question)
+        else:
+            st.write("You have completed all the selected topics. Well done!")
+
+    # Display chat history on sidebar
+    st.sidebar.header("Chat History")
+    for message in tutor._chat_history:
+        if message.role == 'system':
+            st.sidebar.markdown(f"**System**: {message.content}")
+        else:
+            st.sidebar.markdown(f"**You**: {message.content}")
+
+
 except (AttributeError):
     print("Error")
-
-
-
-
-
-answer = st.text_input("Your answer:")
-if st.button("Submit Answer"):
-    feedback, score = tutor.give_feedback(answer)
-    st.write("Feedback: ", feedback)
-
-    if score < tutor.score_threshold:  # if answer is incorrect or partially correct
-        # generate subtopic from current_keyword and add it to st.session_state.selected_keywords
-        subtopic = tutor.extract_keywords(feedback)  # This should ideally be a more sophisticated subtopic generation, but we'll use keyword extraction for simplicity.
-        st.session_state.selected_keywords.insert(0, subtopic[0])  # Insert the first keyword as a subtopic
-    elif st.session_state.selected_keywords:  # if there are still st.session_state.selected_keywords left
-        st.session_state.selected_keywords.pop(0)  # remove the current keyword
-
-    if st.session_state.selected_keywords:
-        current_keyword = st.session_state.selected_keywords[0]
-        question, _ = tutor.generate_question_answer(current_keyword)
-        st.write("Next question: ", question)
-    else:
-        st.write("You have completed all the selected topics. Well done!")
-
-# Display chat history on sidebar
-st.sidebar.header("Chat History")
-for message in tutor._chat_history:
-    if message.role == 'system':
-        st.sidebar.markdown(f"**System**: {message.content}")
-    else:
-        st.sidebar.markdown(f"**You**: {message.content}")
