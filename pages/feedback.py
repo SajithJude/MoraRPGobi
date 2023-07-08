@@ -219,7 +219,7 @@ try:
 # text = st.text_area("Input text for learning:", "Enter text here...")
 
 # if "keywords" not in st.session_state:
-#     st.session_state.keywords = []
+#     keywords = []
 
 
 # if st.button("Index topics"):
@@ -232,14 +232,14 @@ try:
     keywords = res.split('\n')
         # st.success("Index created successfully")
     # keywords = tutor.extract_keywords(text)
-    st.session_state.keywords = keywords
+    keywords = keywords
 
 
 
     # if "selected_keywords" not in st.session_state:
     #     selected_keywords
 
-    selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
+    selected_keywords = st.multiselect('Select topics for questions', keywords)
 
     if st.button("Start learning Session"):
         current_keyword = selected_keywords.pop(0)
