@@ -235,8 +235,8 @@ if uploaded_file is not None:
     keywords = res.split('\n')
         # st.success("Index created successfully")
     # keywords = tutor.extract_keywords(text)
-    if "keywords" not in st.session_state:
-        st.session_state.keywords = keywords
+if "keywords" not in st.session_state:
+    st.session_state.keywords = keywords
 
 
 
