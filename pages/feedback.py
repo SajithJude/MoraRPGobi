@@ -225,22 +225,17 @@ uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
 if uploaded_file is not None:
     # if "index" not in st.session_state:
     st.session_state.index = process_pdf(uploaded_file)
-    res  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
-    keywords = res.split('\n')
-        # st.success("Index created successfully")
-    # keywords = tutor.extract_keywords(text)
-    st.session_state.keywords = keywords
+res  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
+keywords = res.split('\n')
+    # st.success("Index created successfully")
+# keywords = tutor.extract_keywords(text)
+st.session_state.keywords = keywords
 
 
+if "selected_keywords" not in st.session_state:
+    st.session_state.selected_keywords = {}
 
-
-    # st.session_state.selected_keywords = {}
-
-keees = st.multiselect('Select topics for questions', st.session_state.keywords)
-
-# if "selected_keywords" not in st.session_state:
-st.session_state.selected_keywords = keees
-
+st.session_state.selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
 
 if st.button("Start learning Session"):
     current_keyword = st.session_state.selected_keywords.pop(0)
