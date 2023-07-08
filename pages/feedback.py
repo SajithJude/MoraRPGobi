@@ -231,13 +231,12 @@ if uploaded_file is not None:
 
 
 
-if st.button()  
-    res  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
-    keywords = res.split('\n')
-        # st.success("Index created successfully")
-    # keywords = tutor.extract_keywords(text)
-    if "keywords" not in st.session_state:
-        st.session_state.keywords = keywords
+res  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
+keywords = res.split('\n')
+    # st.success("Index created successfully")
+# keywords = tutor.extract_keywords(text)
+if "keywords" not in st.session_state:
+    st.session_state.keywords = keywords
 
 
 
