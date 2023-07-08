@@ -233,9 +233,9 @@ if uploaded_file is not None:
 
 
 if "selected_keywords" not in st.session_state:
-    st.session_state.selected_keywords = {}
+    # st.session_state.selected_keywords = {}
 
-st.session_state.selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
+    st.session_state.selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
 
 if st.button("Start learning Session"):
     current_keyword = st.session_state.selected_keywords.pop(0)
