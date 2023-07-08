@@ -164,12 +164,13 @@ if st.button("Index topics"):
     st.session_state.keywords = keywords
 
 
+if "selected_keywords" not in st.session_state:
+    st.session_state.selected_keywords = {}
 
-
-selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
+st.session_state.selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
 
 if st.button("Start learning Session"):
-    current_keyword = selected_keywords.pop(0)
+    current_keyword = st.session_state.selected_keywords.pop(0)
     question, _ = tutor.generate_question_answer(current_keyword)
     st.write("Question: ", question)
     st.write("Provide your answer and press 'Submit Answer' when ready.")
@@ -187,14 +188,14 @@ if st.button("Submit Answer"):
     st.write("Feedback: ", feedback)
 
     if score < tutor.score_threshold:  # if answer is incorrect or partially correct
-        # generate subtopic from current_keyword and add it to selected_keywords
+        # generate subtopic from current_keyword and add it to st.session_state.selected_keywords
         subtopic = tutor.extract_keywords(feedback)  # This should ideally be a more sophisticated subtopic generation, but we'll use keyword extraction for simplicity.
-        selected_keywords.insert(0, subtopic[0])  # Insert the first keyword as a subtopic
-    elif selected_keywords:  # if there are still selected_keywords left
-        selected_keywords.pop(0)  # remove the current keyword
+        st.session_state.selected_keywords.insert(0, subtopic[0])  # Insert the first keyword as a subtopic
+    elif st.session_state.selected_keywords:  # if there are still st.session_state.selected_keywords left
+        st.session_state.selected_keywords.pop(0)  # remove the current keyword
 
-    if selected_keywords:
-        current_keyword = selected_keywords[0]
+    if st.session_state.selected_keywords:
+        current_keyword = st.session_state.selected_keywords[0]
         question, _ = tutor.generate_question_answer(current_keyword)
         st.write("Next question: ", question)
     else:
