@@ -129,17 +129,10 @@ class TutorAgent:
 
         feedback_instructions = """
         Please provide detailed feedback based on the following principles:
-        (1) Help clarify what good performance is (goals, criteria, expected standards)
-        (2) Facilitate the development of self-assessment (reflection) in learning
-        (3) Deliver high quality information to students about their learning
-        (4) Encourage teacher and peer dialogue around learning
-        (5) Encourage positive motivational beliefs and self-esteem
-        (6) Provide opportunities to close the gap between current and desired performance
-        (7) Provide information to teachers that can be used to help shape teaching
-
+       
         Do not give away the correct answer if the answer is incorrect or only partly correct.
         Make sure to mention the principle numbers that are relevant to your feedback.
-        If the answer is incorrect or only partly correct, guide the user to try again.
+        If the answer is incorrect or only partly correct, mention the areas to improve.
 
         Expected answer: {self.expected_answer}
         User's answer: {answer}
@@ -195,7 +188,7 @@ if st.button("Submit Answer"):
 
     if score < tutor.score_threshold:  # if answer is incorrect or partially correct
         # generate subtopic from current_keyword and add it to selected_keywords
-        subtopic = tutor.extract_keywords(current_keyword)  # This should ideally be a more sophisticated subtopic generation, but we'll use keyword extraction for simplicity.
+        subtopic = tutor.extract_keywords(feedback)  # This should ideally be a more sophisticated subtopic generation, but we'll use keyword extraction for simplicity.
         selected_keywords.insert(0, subtopic[0])  # Insert the first keyword as a subtopic
     elif selected_keywords:  # if there are still selected_keywords left
         selected_keywords.pop(0)  # remove the current keyword
