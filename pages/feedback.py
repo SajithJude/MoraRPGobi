@@ -103,6 +103,7 @@ class TutorAgent:
         self._llm = llm
         self._chat_history = chat_history
         self.score_threshold = 0.7  # adjust this as per your requirements
+        self.expected_answer = ""  # Initialize expected_answer attribute
 
     def reset(self):
         self._chat_history = []
