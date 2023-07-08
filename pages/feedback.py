@@ -226,7 +226,8 @@ if uploaded_file is not None:
 
     if "index" not in st.session_state:
         st.session_state.index = process_pdf(uploaded_file)
-    keywords  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
+    res  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
+    keywords = res.split('\n')
         # st.success("Index created successfully")
     # keywords = tutor.extract_keywords(text)
     st.session_state.keywords = keywords
