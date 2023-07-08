@@ -232,11 +232,16 @@ if uploaded_file is not None:
     st.session_state.keywords = keywords
 
 
-if "selected_keywords" not in st.session_state:
+
+
     # st.session_state.selected_keywords = {}
 
-    st.session_state.selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords)
+keees = st.multiselect('Select topics for questions', st.session_state.keywords)
 
+if "selected_keywords" not in st.session_state:
+    st.session_state.selected_keywords = keees
+
+    
 if st.button("Start learning Session"):
     current_keyword = st.session_state.selected_keywords.pop(0)
     question, _ = tutor.generate_question_answer(current_keyword)
