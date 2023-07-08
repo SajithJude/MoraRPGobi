@@ -96,7 +96,60 @@ from llama_index.llms import OpenAI, ChatMessage
 from typing import List
 from nltk.translate.bleu_score import sentence_bleu
 
+
+from llama_index import (
+    GPTVectorStoreIndex, Document, SimpleDirectoryReader,
+    QuestionAnswerPrompt, LLMPredictor, ServiceContext
+)
+
+
+from langchain import OpenAI
+from tempfile import NamedTemporaryFile
+from llama_index import download_loader
+
+import openai
+import os
+from pathlib import Path
+from llama_index.retrievers import VectorIndexRetriever
+from llama_index.query_engine import RetrieverQueryEngine
+PDFReader = download_loader("PDFReader")
+
+from llama_index import Prompt
+
+# loader = PDFReader()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+
+
 llm = OpenAI(temperature=0, model="gpt-3.5-turbo-0613")
+
+
+
+
+
+
+def process_pdf(uploaded_file):
+    loader = PDFReader()
+    with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+        temp_file.write(uploaded_file.getvalue())
+        documents = loader.load_data(file=Path(temp_file.name))
+    
+    llm_predictor = LLMPredictor(llm=OpenAI(temperature=0.15, model_name="text-davinci-003", max_tokens=1000))
+    service_context = ServiceContext.from_defaults(llm_predictor=llm_predictor)
+    
+    if "index" not in st.session_state:
+        index = GPTVectorStoreIndex.from_documents(documents,service_context=service_context)
+        query_engine = index.as_query_engine(text_qa_template=QA_TEMPLATE)
+        st.session_state.index = query_engine
+    # st.session_state.index = index
+    return st.session_state.index
+
+
+
+
+
 
 class TutorAgent:
     def __init__(self, chat_history: List[ChatMessage] = []):
@@ -153,14 +206,29 @@ class TutorAgent:
 tutor = TutorAgent()
 
 st.title("AI Tutor")
-text = st.text_area("Input text for learning:", "Enter text here...")
+
+
+
+
+
+
+
+# text = st.text_area("Input text for learning:", "Enter text here...")
 
 if "keywords" not in st.session_state:
     st.session_state.keywords = []
 
 
-if st.button("Index topics"):
-    keywords = tutor.extract_keywords(text)
+# if st.button("Index topics"):
+
+uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
+if uploaded_file is not None:
+
+    if "index" not in st.session_state:
+        st.session_state.index = process_pdf(uploaded_file)
+    keywords  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
+        # st.success("Index created successfully")
+    # keywords = tutor.extract_keywords(text)
     st.session_state.keywords = keywords
 
 
