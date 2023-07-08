@@ -103,7 +103,7 @@ from llama_index import (
 )
 
 
-from langchain import OpenAI
+# from langchain import OpenAI
 from tempfile import NamedTemporaryFile
 from llama_index import download_loader
 
