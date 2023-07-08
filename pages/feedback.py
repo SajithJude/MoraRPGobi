@@ -233,18 +233,18 @@ if uploaded_file is not None:
 
         # st.success("Index created successfully")
     # keywords = tutor.extract_keywords(text)
-if "keywords" not in st.session_state:
+# if "keywords" not in st.session_state:
     
     res  = st.session_state.index.query("Please list 10 keywords or topics from the document").response
     keywords = res.split('\n')
-    st.session_state.keywords = keywords
+    # st.session_state.keywords = keywords
 
 
 
 # if "selected_keywords" not in st.session_state:
 #     selected_keywords
 
-selected_keywords = st.multiselect('Select topics for questions', st.session_state.keywords, default= st.session_state.keywords[1])
+    selected_keywords = st.multiselect('Select topics for questions',keywords, default=keywords[1])
 
 if st.button("Start learning Session"):
     current_keyword = selected_keywords.pop(0)
