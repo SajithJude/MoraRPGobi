@@ -215,8 +215,8 @@ st.title("AI Tutor")
 
 # text = st.text_area("Input text for learning:", "Enter text here...")
 
-if "keywords" not in st.session_state:
-    st.session_state.keywords = []
+# if "keywords" not in st.session_state:
+#     st.session_state.keywords = []
 
 
 # if st.button("Index topics"):
