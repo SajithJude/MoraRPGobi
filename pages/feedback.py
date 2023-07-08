@@ -116,7 +116,7 @@ class TutorAgent:
     def generate_question_answer(self, keyword: str) -> (str, str):
         self.reset()
         message = self._llm.chat([ChatMessage(role="system", content=f"Generate a question about the topic: {keyword} with the answer.")])
-        question, expected_answer = message.message.content.split('\n')  # Assuming the model returns question and answer separated by a newline
+        question, expected_answer = message.message.content.split(' ,')  # Assuming the model returns question and answer separated by a newline
         self.expected_answer = expected_answer
         return question, expected_answer
 
